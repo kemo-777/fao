@@ -5,10 +5,10 @@ from datetime import datetime
 import re
 import uuid
 
-# --- إعدادات النظام العالمي السيادي (v16.0 Interstellar Logistics & Nanobots) ---
+# --- إعدادات النظام العالمي السيادي (v17.0 FAO Enterprise Hub) ---
 st.set_page_config(
-    page_title="FAO-UNV Interstellar Sovereign Hub v16.0",
-    page_icon="🌌",
+    page_title="FAO Global Sovereign Enterprise Hub v17.0",
+    page_icon="🌍",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -20,6 +20,7 @@ st.markdown("""
         direction: rtl;
         text-align: right;
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8fafc;
     }
     .stTabs [data-baseweb="tab-list"] {
         flex-direction: row-reverse;
@@ -40,31 +41,31 @@ st.markdown("""
         background-color: #0076a8 !important;
         color: white !important;
     }
-    .hero-v16-banner {
-        background: linear-gradient(135deg, #020408 0%, #3b0764 100%);
+    .hero-banner {
+        background: linear-gradient(135deg, #001f3f 0%, #0076a8 100%);
         color: white;
-        padding: 50px;
-        border-radius: 18px;
+        padding: 40px;
+        border-radius: 14px;
         margin-bottom: 25px;
-        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.15);
         text-align: right;
     }
-    .v16-badge {
-        background-color: #faf5ff;
-        color: #7e22ce;
+    .fao-badge {
+        background-color: #e2f0d9;
+        color: #276749;
         padding: 6px 14px;
         border-radius: 6px;
         font-weight: bold;
         font-size: 13px;
-        border: 1px solid #e9d5ff;
+        border: 1px solid #c6f6d5;
         display: inline-block;
     }
-    .v16-card {
+    .fao-card {
         background-color: white;
         padding: 24px;
         border-radius: 8px;
         box-shadow: 0 3px 6px rgba(0,0,0,0.06);
-        border-right: 6px solid #7e22ce;
+        border-right: 6px solid #0076a8;
         margin-bottom: 15px;
         text-align: right;
     }
@@ -72,7 +73,7 @@ st.markdown("""
         direction: rtl;
         text-align: right;
     }
-    .v16-footer {
+    .fao-footer {
         text-align: center;
         padding: 30px;
         color: #4a5568;
@@ -81,161 +82,172 @@ st.markdown("""
         margin-top: 50px;
     }
     @media (max-width: 768px) {
-        .hero-v16-banner { padding: 20px; }
+        .hero-banner { padding: 20px; }
         .stTabs [data-baseweb="tab"] { font-size: 12px; height: 45px; padding: 0 8px; }
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- حالة التقنيات عابرة المجرات (v16.0 State) ---
-if 'v16_interstellar_status' not in st.session_state:
-    st.session_state.v16_interstellar_status = {
-        "Interstellar Food Logistics (Mars & Lunar Colonies)": "🟢 نشط (تتبع شحنات الغذاء عبر المجموعات الشمسية)",
-        "Molecular Nanotechnology & Soil Nanobots": "🟢 مفعل (أسراب الروبوتات النانوية تُصلح خلايا النباتات ذاتياً)"
+# --- حالة الأقسام الإدارية والعمليات (v17.0 State) ---
+if 'fao_admin_status' not in st.session_state:
+    st.session_state.fao_admin_status = {
+        "Global Food Security Division": "🟢 نشط (مراقبة أسواق الغذاء العالمية)",
+        "Early Warning & Crisis Response Center": "🟢 نشط (رصد الطوارئ المناخية والزراعية)",
+        "Sustainable Agricultural Development": "🟢 نشط (إدارة مشاريع التنمية الإقليمية)",
+        "One Health & AMR Surveillance": "🟢 نشط (مكافحة مقاومة مضادات الميكروبات)"
     }
 
-if 'interstellar_shipments' not in st.session_state:
-    st.session_state.interstellar_shipments = [
-        {"shipment_id": "#MARS-SUPPLY-01", "origin": "محطة الأرض المركزية للفاو", "destination": "مستعمرة أريس - كوكب المريخ", "cargo": "بذور قمح معدلة وراثياً لتحمل الجفاف الفضائي", "status": "في مسار الالتفاف الكوكبي"},
-        {"shipment_id": "#LUNAR-SUPPLY-04", "origin": "إقليم الدلتا - الأرض", "destination": "قاعدة القمر الزراعية الحية", "cargo": "مغذيات حيوية نانوية", "status": "تم التسليم بنجاح"}
+if 'fao_reports' not in st.session_state:
+    st.session_state.fao_reports = [
+        {"id": "#FAO-REP-01", "department": "الأمن الغذائي العالمي", "region": "منطقة الشرق الأوسط وشمال إفريقيا", "summary": "تقييم مؤشرات الاكتفاء الذاتي وسلاسل الإمداد الإقليمية.", "date": "2026-10-13"},
+        {"id": "#FAO-REP-02", "department": "مكتب فلسطين الإقليمي", "region": "فلسطين (الضفة الغربية وقطاع غزة)", "summary": "دعم الصمود الزراعي، توفير المدخلات، وإعادة تأهيل شبكات الري.", "date": "2026-10-13"}
     ]
 
 # دالة تنقية المدخلات
-def sanitize_v16_input(text):
+def sanitize_input(text):
     if not text:
         return ""
     clean = re.sub(r'<[^>]*>', '', text)
     return clean.strip()
 
-# --- الشريط الجانبي للإصدار 16.0 ---
+# --- الشريط الجانبي للإصدار 17.0 ---
 with st.sidebar:
-    st.markdown("### **FAO Interstellar Gateway**")
-    st.markdown('<p class="v16-badge">🌌 v16.0 Interstellar & Nanobots</p>', unsafe_allow_html=True)
+    st.markdown("### **FAO Global Gateway**")
+    st.markdown('<p class="fao-badge">🌐 v17.0 Enterprise Management</p>', unsafe_allow_html=True)
     st.markdown("---")
     
-    st.markdown("#### 🌠 مؤشرات الحضارات الكونية")
-    for tech, st_v in st.session_state.v16_interstellar_status.items():
-        st.markdown(f"**{tech}**\n{st_v}")
+    st.markdown("#### 🏛️ حالة الأقسام الإدارية المركزية")
+    for dept, stat in st.session_state.fao_admin_status.items():
+        st.markdown(f"**{dept}**\n{stat}")
         
     st.markdown("---")
-    st.markdown("**المعماري ومبتكر النظام الكوني الأسمى:**\nمهندس/ كريم عمرو محمد")
+    st.markdown("**المعماري ومصمم النظام:**\nمهندس/ كريم عمرو محمد")
 
-# --- واجهة البطل الكونية الكبرى v16.0 ---
+# --- واجهة البطل الكبرى ---
 st.markdown("""
-    <div class="hero-v16-banner">
+    <div class="hero-banner">
         <h1>🌍 منظمة الأغذية والزراعة للأمم المتحدة (FAO)</h1>
-        <h3>المنظومة الكونية العابرة للمجرات v16.0 (دعم فلسطين الأبية، Interstellar Logistics & Molecular Soil Nanobots)</h3>
-        <p>إدارة تدفقات الغذاء بين الكواكب، دعم الصمود الزراعي في فلسطين، وأسراب النانوبات الجزيئية لإصلاح خلايا المحاصيل داخل التربة فوراً.</p>
+        <h3>المنظومة الإدارية والتشغيلية السيادية v17.0 (إدارة الفاو المركزية، الخريطة العالمية، ودعم فلسطين الأبية)</h3>
+        <p>نظام إداري وتقني متكامل يدير أقسام الفاو العالمية، يتابع الأمن الغذائي، ويدعم العمليات الإقليمية بشفافية مطلقة.</p>
     </div>
 """, unsafe_allow_html=True)
 
-# --- التبويبات الرئيسية (v16.0 Interstellar Ecosystem) ---
-tab_space_logistics, tab_nanobots, tab_palestine_office, tab_twin_v16, tab_gis_v16, tab_bi_v16, tab_admin_v16 = st.tabs([
-    "🚀 الإمداد الزراعي عابر الكواكب", 
-    "🔬 النانو جزيئية وروبوتات التربة", 
-    "🇵🇸 مكتب فلسطين والعمليات الإقليمية",
-    "🌐 التوأم الكوني المجري ثلاثي الأبعاد", 
-    "🗺️ خريطة فلسطين والمستعمرات الكونية", 
-    "📊 لوحات المؤشرات الكونية (BI)", 
-    "⚙️ إدارة المنظومة الكونية المطلقة"
+# --- التبويبات الرئيسية المحدثة ---
+tab_admin_fao, tab_world_map, tab_operations, tab_bi_v17, tab_admin_control = st.tabs([
+    "🏛️ الأقسام الإدارية والتشغيلية للفاو", 
+    "🗺️ خريطة العالم ومكتب فلسطين الإقليمي", 
+    "📋 سجل التقارير والتدخلات الميدانية", 
+    "📊 لوحات التحليلات الاستراتيجية (BI)", 
+    "⚙️ لوحة التحكم وإدارة النظام"
 ])
 
-# ================= TAB 0: الإمداد الزراعي عابر الكواكب =================
-with tab_space_logistics:
-    st.subheader("🚀 الإمداد الزراعي وسلاسل التوريد عابرة الكواكب (Interstellar Logistics)")
-    st.markdown("تتبع شحنات الغذاء والمحاصيل المعدلة وراثياً عبر الفضاء السحيق بين كوكب الأرض والمستعمرات على المريخ والقمر:")
+# ================= TAB 0: الأقسام الإدارية والتشغيلية للفاو =================
+with tab_admin_fao:
+    st.subheader("🏛️ قطاعات وإدارات منظمة الأغذية والزراعة (FAO Core Divisions)")
+    st.markdown("الوحدات الاستراتيجية المسؤولة عن رسم السياسات وتوجيه العمليات الزراعية عالمياً:")
     
-    for shp in st.session_state.interstellar_shipments:
+    col_a1, col_a2 = st.columns(2)
+    with col_a1:
+        st.markdown("""
+            <div class="fao-card">
+                <h4>🌾 قسم الأمن الغذائي والأسواق العالمية</h4>
+                <p>متابعة أسعار الغذاء العالمية، تحليل مؤشرات العرض والطلب، وتوفير قواعد البيانات الإحصائية لدعم استقرار الأسواق وتجنب الأزمات.</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("""
+            <div class="fao-card">
+                <h4>🚨 مركز الإنذار المبكر وإدارة الأزمات</h4>
+                <p>رصد التغيرات المناخية الحادة، الجفاف، والآفات الزراعية الطارئة لإنذار الحكومات وإطلاق خطط الاستجابة الإنسانية الفورية.</p>
+            </div>
+        """, unsafe_allow_html=True)
+    with col_a2:
+        st.markdown("""
+            <div class="fao-card">
+                <h4>🌱 إدارة التنمية الزراعية المستدامة</h4>
+                <p>تطوير الممارسات الزراعية الحديثة، الحفاظ على الموارد المائية، وتحسين إنتاجية المحاصيل عبر تقنيات الاستشعار عن بعد والأقمار الصناعية.</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.markdown("""
+            <div class="fao-card">
+                <h4>🛡️ مبادرة 'الصحة الواحدة' ومقاومة المضادات</h4>
+                <p>تنسيق الجهود الدولية للحد من استخدام مضادات الميكروبات غير المنضبطة في الثروة الحيوانية والزراعة لحماية الصحة العامة.</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+# ================= TAB 1: خريطة العالم ومكتب فلسطين =================
+with tab_world_map:
+    st.subheader("🗺️ خريطة العالم ومتابعة المكاتب الإقليمية (Global Map & Palestine Office)")
+    st.markdown("خريطة العالم التفاعلية لتوزيع العمليات الإدارية، مع إبراز العمل الإنساني والزراعي في **فلسطين الحبيبة**:")
+    
+    # خريطة العالم عادية غير متمركزة حصرياً، مع إدراج إحداثيات دولية وفلسطينية
+    world_map_df = pd.DataFrame({
+        'country': ['فلسطين', 'مصر (المكتب الإقليمي)', 'إيطاليا ( المقر الرئيسي بروما)', 'كينيا', تايلاند := 'تايلاند', 'الولايات المتحدة'],
+        'lat': [31.9522, 30.0444, 41.9028, -1.2921, 13.7563, 38.8951],
+        'lon': [35.2332, 31.2357, 12.4964, 36.8219, 100.5018, -77.0364],
+        'status': ['نشط - دعم الصمود الزراعي', 'نشط - إقليمي', 'المقر الرئيسي للفاو', 'نشط - إفريقي', 'نشط - آسيوي', 'نشط - أمريكي']
+    })
+    
+    st.map(world_map_df, latitude='lat', longitude='lon', size=60, color='#0076a8')
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.markdown("""
+        <div class="fao-card" style="border-right-color: #dc2626;">
+            <h4>🇵🇸 نشاط ومساهمات مكتب الفاو الإقليمي في فلسطين</h4>
+            <p>• <b>دعم صمود المزارعين:</b> توفير البذور المعتمدة، الأسمدة، ومستلزمات الإنتاج الزراعي للتعاونيات المحلية.</p>
+            <p>• <b>إعادة التأهيل:</b> إصلاح الآبار ومحطات المياه وشبكات الري المتضررة لضمان استمرار الأمن الغذائي المحلي.</p>
+            <p>• <b>التنسيق الدولي:</b> إعداد التقارير الدورية حول حالة الأمن الغذائي في الأراضي الفلسطينية وتقديمها لمتخذي القرار في المقر الرئيسي بروما.</p>
+        </div>
+    """, unsafe_allow_html=True)
+
+# ================= TAB 2: سجل التقارير والتدخلات =================
+with tab_operations:
+    st.subheader("📋 سجل التقارير والتدخلات الميدانية (FAO Operational Reports)")
+    for rep in st.session_state.fao_reports:
         st.markdown(f"""
-            <div class="v16-card">
-                <h4>🚀 شحنة فضائية: {shp['shipment_id']}</h4>
-                <p><b>من نقطة الإطلاق:</b> {shp['origin']}</p>
-                <p><b>إلى المستعمرة الوجهة:</b> {shp['destination']}</p>
-                <p><b>طبيعة الحمولة الزراعية:</b> {shp['cargo']}</p>
-                <p><b>حالة المسار الفضائي:</b> <span style="color: #7e22ce; font-weight: bold;">{shp['status']}</span></p>
+            <div class="fao-card">
+                <h4>📄 مرجع التقرير: {rep['id']} | القسم: {rep['department']}</h4>
+                <p><b>الإقليم المستهدف:</b> {rep['region']} | <b>تاريخ الإصدار:</b> {rep['date']}</p>
+                <p>{rep['summary']}</p>
             </div>
         """, unsafe_allow_html=True)
         
-    with st.form("interstellar_form"):
-        st.markdown("#### ➕ إطلاق شحنة إمداد غذائي جديدة نحو الكواكب الأخرى:")
-        dest_colony = st.text_input("المستعمرة الفضائية الوجهة (المريخ، القمر، إلخ):")
-        cargo_desc = st.text_input("وصف الشحنة الزراعية أو البذور:")
-        ship_btn = st.form_submit_button("إطلاق الشحنة عبر الفضاء السحيق 🌌")
+    with st.form("add_fao_report_form"):
+        st.markdown("#### ➕ إضافة تقرير إداري أو ميداني جديد:")
+        rep_dept = st.selectbox("القسم المعني:", ["الأمن الغذائي العالمي", "مكتب فلسطين الإقليمي", "مركز الإنذار المبكر", "التنمية المستدامة"])
+        rep_reg = st.text_input("الإقليم أو الدولة المستهدفة:")
+        rep_sum = st.text_area("ملخص التقرير التنفيذي:")
+        rep_btn = st.form_submit_button("إضافة التقرير للسجل الرسمي 🚀")
         
-        if ship_btn and dest_colony and cargo_desc:
-            new_sid = f"#SPACE-SUP-{str(uuid.uuid4())[:4].upper()}"
-            st.session_state.interstellar_shipments.append({
-                "shipment_id": new_sid,
-                "origin": "محطة الأرض المركزية للفاو",
-                "destination": sanitize_v16_input(dest_colony),
-                "cargo": sanitize_v16_input(cargo_desc),
-                "status": "في مسار الالتفاف الكوكبي نحو الفضاء السحيق"
+        if rep_btn and rep_reg and rep_sum:
+            new_id = f"#FAO-REP-{str(uuid.uuid4())[:4].upper()}"
+            st.session_state.fao_reports.append({
+                "id": new_id,
+                "department": rep_dept,
+                "region": sanitize_input(rep_reg),
+                "summary": sanitize_input(rep_sum),
+                "date": str(datetime.now().date())
             })
-            st.success(f"✨ تم إطلاق الشحنة بنجاح برقم تعريف كوني {new_sid}!")
+            st.success(f"✨ تمت إضافة التقرير بنجاح برقم مرجعي {new_id}!")
             st.rerun()
 
-# ================= TAB 1: تكنولوجيا النانو الجزيئية الحية =================
-with tab_nanobots:
-    st.subheader("🔬 تكنولوجيا النانو الجزيئية وروبوتات التربة الحية (Molecular Nanotechnology & Soil Nanobots)")
-    st.markdown("أسراب من الروبوتات النانوية المجهرية المحقونة في التربة لإصلاح الخلايا التالفة للمحاصيل وتعديل الحمض النووي نباتياً ضد الجفاف فوراً:")
-    
-    st.markdown("""
-        <div class="v16-card">
-            <h4>🔬 شبكة النانوبات المجهرية (Soil Nanobots Network)</h4>
-            <p>• <b>الإصلاح الخلوي الذاتي:</b> ترصد أسراب النانوبات أي خلل في خلايا جذور النباتات وتقوم بإصلاحها مجهرياً في أجزاء من الثانية.</p>
-            <p>• <b>التعديل الجيني الميداني:</b> إعادة برمجة تسلسل الـ DNA للمحاصيل الحقلية لتتحمل الجفاف الشديد والملوحة المطلقة دون أي تدخل بشري.</p>
-        </div>
-    """, unsafe_allow_html=True)
-    if st.button("تفعيل أسراب النانوبات لإصلاح الحقول ميدانياً (Deploy Nanobots) ⚡"):
-        st.success("🔬 تم حقن وتفعيل أسراب الروبوتات النانوية في التربة بنجاح! جاري إصلاح الخلايا النباتية وتعديل الجينات ضد الجفاف الفضائي والأرضي.")
-
-# ================= TAB 2: مكتب فلسطين الإقليمي =================
-with tab_palestine_office:
-    st.subheader("🇵🇸 مكتب منظمة الفاو في فلسطين (FAO Palestine Regional Office)")
-    st.markdown("متابعة ودعم الصمود الزراعي، الأمن الغذائي، ومشاريع الإغاثة في الأراضي الفلسطينية:")
-    st.markdown("""
-        <div class="v16-card" style="border-right-color: #dc2626;">
-            <h4>🇵🇸 دعم القطاع الزراعي الفلسطيني وسبل العيش</h4>
-            <p>• <b>مراصد الأمن الغذائي:</b> تتبع وتوثيق حالة المحاصيل والموارد المائية في الضفة الغربية وقطاع غزة.</p>
-            <p>• <b>برامج الإغاثة الفورية:</b> تنسيق المساعدات والمغذيات الزراعية للتعاونيات والمزارعين.</p>
-            <p>• <b>السيادة المكانية:</b> تم إثبات وتثبيت إحداثيات دولة <b>فلسطين الحبيبة</b> على الخرائط الرسمية للمنظومة.</p>
-        </div>
-    """, unsafe_allow_html=True)
-
-# ================= TAB 3: التوأم الكوني المجري =================
-with tab_twin_v16:
-    st.subheader("🌐 التوأم الرقمي الكوني المجري ثلاثي الأبعاد")
-    st.markdown("شاشة محاكاة موحدة تدير كوكب الأرض والمستعمرات الفضائية في آنٍ واحد.")
-    st.success("🌐 التوأم الكوني المجري متزامن بنسبة 100% بين الأرض والمريخ والقمر.")
-
-# ================= TAB 4: خريطة فلسطين والمجموعات الشمسية =================
-with tab_gis_v16:
-    st.subheader("🗺️ الخريطة المكانية المعتمدة (تمركز في فلسطين الحبيبة وسلاسل التوريد)")
-    palestine_space_df = pd.DataFrame({
-        'lat': [31.9522, 31.5000, 32.2211, 30.0444],
-        'lon': [35.2332, 34.4668, 35.2544, 31.2357],
-        'location': ['القدس الشريف - فلسطين', 'غزة العزة - فلسطين', 'نابلس - فلسطين', 'محطة الأرض المركزية للفاو']
-    })
-    st.map(palestine_space_df, size=90, color='#dc2626')
-
-# ================= TAB 5: لوحات المؤشرات الكونية =================
-with tab_bi_v16:
-    st.subheader("📊 لوحات مؤشرات الحضارات الكونية (Enterprise BI)")
-    fig_v16 = px.bar(
-        pd.DataFrame({'Metric': ['إمدادات الكواكب', 'روبوتات النانو', 'دعم فلسطين', 'الاستقرار المطلق'], 'Score': [100, 100, 100, 100]}),
-        x='Metric', y='Score', color='Score', color_continuous_scale='Purples'
+# ================= TAB 3: لوحات التحليلات الاستراتيجية =================
+with tab_bi_v17:
+    st.subheader("📊 لوحات المؤشرات والتحليلات الاستراتيجية (Enterprise BI Dashboards)")
+    fig_fao = px.bar(
+        pd.DataFrame({'Department': ['الأمن الغذائي', 'الإنذار المبكر', 'التنمية المستدامة', 'مكتب فلسطين'], 'Efficiency': [96, 94, 98, 99]}),
+        x='Department', y='Efficiency', color='Efficiency', color_continuous_scale='Teal'
     )
-    st.plotly_chart(fig_v16, use_container_width=True)
+    st.plotly_chart(fig_fao, use_container_width=True)
 
-# ================= TAB 6: إدارة المنظومة الكونية المطلقة =================
-with tab_admin_v16:
-    st.subheader("⚙️ إعدادات التحكم السيادي والكوني v16.0")
-    st.success("✅ كافة الأنظمة الكونية وفلسطين الأبية تعمل بتناغم مطلق وتكامل فائق.")
+# ================= TAB 4: لوحة التحكم وإدارة النظام =================
+with tab_admin_control:
+    st.subheader("⚙️ لوحة التحكم المركزي وإدارة المنظومة (Admin Control Center)")
+    st.success("✅ كافة الأقسام الإدارية، الخريطة العالمية، ومكتب فلسطين تعمل بتناغم وتكامل مؤسسي تام.")
 
-# --- التذييل الكوني الأبدي الأسمى ---
+# --- التذييل الرسمي النهائي ---
 st.markdown("""
-    <div class="v16-footer">
-        FAO Representation in Palestine & Interstellar Systems | Sovereign System v16.0 <br>
-        Engineered with Palestine Sovereignty, Interstellar Logistics, and Nanotechnology by <b>Eng. Kareem Amr Mohamed</b>.
+    <div class="fao-footer">
+        FAO Representation in Egypt & Palestine Regional Office | Global Enterprise System v17.0 <br>
+        Engineered with Central FAO Management, Global World Map, and Palestine Office Integration by <b>Eng. Kareem Amr Mohamed</b>.
     </div>
 """, unsafe_allow_html=True)
